@@ -1,6 +1,6 @@
 port: 80
 basePath: /
-imageTag: master
+imageTag: v1.6.5
 portal:
   basePath: /
   portMappings: {}
