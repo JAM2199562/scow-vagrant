@@ -78,7 +78,18 @@ Vagrant.configure("2") do |config|
       vm_list.each do |it|
           vm_config.vm.provision "shell", inline: "echo " + it[:eth1] + "    " + it[:name] + " >> /etc/hosts"
       end
+      # 替换YUM源为USTC的镜像地址
+      vm_config.vm.provision "shell", inline: <<-SHELL
+        sudo sed -i.bak \
+          -e 's|^mirrorlist=|#mirrorlist=|g' \
+          -e 's|^#baseurl=http://mirror.centos.org/centos|baseurl=https://mirrors.ustc.edu.cn/centos-vault/centos|g' \
+          /etc/yum.repos.d/CentOS-Base.repo
+      SHELL
 
+      # 禁用 fastestmirror 插件
+      vm_config.vm.provision "shell", inline: <<-SHELL
+      sudo sed -i 's/^enabled=1/enabled=0/' /etc/yum/pluginconf.d/fastestmirror.conf
+    SHELL
 
       if item[:role]=="slurm"
 
